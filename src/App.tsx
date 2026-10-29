@@ -170,7 +170,7 @@ function HomePage({ onProject }: { onProject: () => void }) {
           <div className="container home-hero-inner">
             <div className="home-copy">
               <span className="eyebrow">APPLIED FINANCE LEARNING LAB · UNALM</span>
-              <h1>Investigación que transforma las finanzas.</h1>
+              <h1>Afinlab que transforma las finanzas.</h1>
               <p>Formamos investigadores capaces de convertir datos en evidencia, conocimiento y mejores decisiones para el desarrollo sostenible.</p>
               <div className="home-actions">
                 <a className="light-button" href="#sobre-nosotros">Conoce AFINLAB <Icon name="arrow" size={17} /></a>
