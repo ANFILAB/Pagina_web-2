@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import RedesSociales from "./RedesSociales";
 
-type Page = "inicio" | "publicaciones";
-
+type Page = "inicio" | "publicaciones" | "redes";
 function ArrowIcon() {
   return (
     <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -129,6 +129,7 @@ function Footer({ navigate }: { navigate: (page: Page, anchor?: string) => void 
           <span>Explora</span>
           <button onClick={() => navigate("inicio", "proyectos")}>Proyectos</button>
           <button onClick={() => navigate("publicaciones")}>Publicaciones</button>
+             <button onClick={() => navigate("redes")}>Redes Sociales</button>
           <button onClick={() => navigate("inicio", "nosotros")}>Sobre AFINLAB</button>
         </div>
         <div className="footer-contact">
@@ -372,23 +373,29 @@ function Publications({ navigate }: { navigate: (page: Page, anchor?: string) =>
     </main>
   );
 }
-
+function getPageFromHash(): Page {
+  const hash = window.location.hash;
+  if (hash.startsWith("#/publicaciones")) return "publicaciones";
+  if (hash.startsWith("#/redes")) return "redes";
+  return "inicio";
+}
 export default function App() {
-  const initialPage: Page = window.location.hash.startsWith("#/publicaciones")
-    ? "publicaciones"
-    : "inicio";
-  const [page, setPage] = useState<Page>(initialPage);
-
+       const [page, setPage] = useState<Page>(getPageFromHash());
   useEffect(() => {
     const handleHashChange = () => {
-      setPage(window.location.hash.startsWith("#/publicaciones") ? "publicaciones" : "inicio");
+           setPage(getPageFromHash());
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const navigate = (nextPage: Page, anchor?: string) => {
-    const hash = nextPage === "publicaciones" ? "#/publicaciones" : "#/inicio";
+        const hash =
+      nextPage === "publicaciones"
+        ? "#/publicaciones"
+        : nextPage === "redes"
+          ? "#/redes"
+          : "#/inicio";
     if (window.location.hash !== hash) {
       window.location.hash = hash;
     }
@@ -405,7 +412,9 @@ export default function App() {
   return (
     <div className="app">
       <Header page={page} navigate={navigate} />
-      {page === "inicio" ? <Home navigate={navigate} /> : <Publications navigate={navigate} />}
+          {page === "inicio" && <Home navigate={navigate} />}
+      {page === "publicaciones" && <Publications navigate={navigate} />}
+      {page === "redes" && <RedesSociales navigate={navigate} />}
       <Footer navigate={navigate} />
     </div>
   );

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import "./RedesSociales.css";
 
+type PageName = "inicio" | "publicaciones" | "redes";
+
+interface RedesSocialesProps {
+  navigate: (page: PageName, anchor?: string) => void;
+}
+
 /* ---------- Imagen con carga automática ----------
    Guarda el archivo en public/img/ con el nombre indicado
    (.png, .jpg, .jpeg o .webp) y aparece solo. */
@@ -21,7 +27,7 @@ function AutoImage({ name, alt, className }: AutoImageProps) {
       <span
         role="img"
         aria-label={alt}
-        className={`img-missing ${className ?? ""}`.trim()}
+        className={`rs-img-missing ${className ?? ""}`.trim()}
       />
     );
   }
@@ -39,22 +45,6 @@ function AutoImage({ name, alt, className }: AutoImageProps) {
 }
 
 /* ---------- Datos ---------- */
-interface NavItem {
-  label: string;
-  href: string;
-  active?: boolean;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: "Sobre nosotros", href: "#" },
-  { label: "Equipo", href: "#" },
-  { label: "Proyectos", href: "#", active: true },
-  { label: "Publicaciones", href: "#" },
-  { label: "Eventos", href: "#" },
-  { label: "Recursos", href: "#" },
-  { label: "Contacto", href: "#" },
-];
-
 const INSTAGRAM_TECH: string[] = ["Canva", "Instagram (Reels / Stories)"];
 const LINKEDIN_TECH: string[] = ["LinkedIn", "Linktree"];
 const LINKEDIN_ITEMS: string[] = [
@@ -66,9 +56,9 @@ const LINKEDIN_ITEMS: string[] = [
 /* ---------- Subcomponentes ---------- */
 function Chips({ items }: { items: string[] }) {
   return (
-    <div className="chips">
+    <div className="rs-chips">
       {items.map((item) => (
-        <span className="chip" key={item}>
+        <span className="rs-chip" key={item}>
           {item}
         </span>
       ))}
@@ -92,137 +82,108 @@ function InstagramIcon() {
   );
 }
 
-/* ---------- Componente principal ---------- */
-export default function RedesSociales() {
+/* ---------- Página ---------- */
+export default function RedesSociales({ navigate }: RedesSocialesProps) {
   return (
-    <div className="redes-page">
-      {/* HEADER */}
-      <header className="header">
-        <div className="header__inner">
-          <a href="#" className="logo" aria-label="AFINLAB">
-            <img src="/afinlab-logo.png" alt="AFINLAB" />
-          </a>
-          <nav className="nav">
-            {NAV_ITEMS.map(({ label, href, active }) => (
-              <a
-                key={label}
-                href={href}
-                className={active ? "active" : undefined}
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
+    <main className="rs-page">
+      <div className="rs-container">
+        <div className="rs-topbar">
+          <button
+            className="rs-back"
+            onClick={() => navigate("inicio", "proyectos")}
+          >
+            ‹ Volver a Proyectos
+          </button>
+          <div className="rs-breadcrumb">
+            <button onClick={() => navigate("inicio", "proyectos")}>
+              Proyectos
+            </button>
+            <span>/</span>
+            <strong>Difusión en Redes Sociales</strong>
+          </div>
         </div>
-      </header>
 
-      {/* CONTENIDO */}
-      <main className="hero">
-        <div className="container">
-          <div className="topbar">
-            <a href="#" className="back">
-              ‹ Volver a Proyectos
-            </a>
-            <div className="breadcrumb">
-              Proyectos <i>/</i> <b>Difusión en Redes Sociales</b>
+        <div className="rs-eyebrow">Proyecto 4</div>
+        <h1 className="rs-title">Redes Sociales</h1>
+        <p className="rs-lead">
+          Difusión de contenido, cobertura de eventos y posicionamiento externo
+          del semillero.
+        </p>
+
+        <div className="rs-grid">
+          {/* INSTAGRAM */}
+          <article className="rs-card">
+            <div className="rs-card-head">
+              <div className="rs-icon" aria-hidden="true">
+                <InstagramIcon />
+              </div>
+              <div>
+                <div className="rs-card-title">Instagram</div>
+                <div className="rs-card-handle">@afinlab.unalm</div>
+              </div>
             </div>
-          </div>
 
-          <div className="eyebrow">Proyecto 4</div>
-          <h1>Redes Sociales</h1>
-          <p className="lead">
-            Difusión de contenido, cobertura de eventos y posicionamiento
-            externo del semillero.
-          </p>
+            <div className="rs-label">Contenido que publican</div>
+            <div className="rs-media">
+              <AutoImage
+                className="rs-qr"
+                name="redes-instagram-qr"
+                alt="QR de Instagram AFINLAB"
+              />
+              <AutoImage
+                name="redes-instagram-evento-1"
+                alt="Evento AFINLAB 1"
+              />
+              <AutoImage
+                name="redes-instagram-evento-2"
+                alt="Evento AFINLAB 2"
+              />
+            </div>
 
-          <div className="grid">
-            {/* INSTAGRAM */}
-            <article className="card">
-              <div className="card__head">
-                <div className="icon" aria-hidden="true">
-                  <InstagramIcon />
-                </div>
-                <div>
-                  <div className="card__title">Instagram</div>
-                  <div className="card__handle">@afinlab.unalm</div>
-                </div>
+            <p className="rs-text">
+              Resultados de investigaciones sectoriales, cobertura de eventos y
+              contenido educativo de finanzas aplicadas.
+            </p>
+
+            <div className="rs-label">Tecnología</div>
+            <Chips items={INSTAGRAM_TECH} />
+          </article>
+
+          {/* LINKEDIN */}
+          <article className="rs-card">
+            <div className="rs-card-head">
+              <div className="rs-icon rs-icon-in" aria-hidden="true">
+                in
               </div>
-
-              <div className="label">Contenido que publican</div>
-              <div className="media">
-                <AutoImage
-                  className="qr"
-                  name="redes-instagram-qr"
-                  alt="QR de Instagram AFINLAB"
-                />
-                <AutoImage
-                  name="redes-instagram-evento-1"
-                  alt="Evento AFINLAB 1"
-                />
-                <AutoImage
-                  name="redes-instagram-evento-2"
-                  alt="Evento AFINLAB 2"
-                />
+              <div>
+                <div className="rs-card-title">LinkedIn</div>
+                <div className="rs-card-handle">linktr.ee/afinlab.unalm</div>
               </div>
+            </div>
 
-              <p>
-                Resultados de investigaciones sectoriales, cobertura de eventos
-                y contenido educativo de finanzas aplicadas.
-              </p>
+            <div className="rs-label">Qué encontrarás</div>
+            <div className="rs-linkedin">
+              <AutoImage
+                name="redes-linkedin-qr"
+                alt="QR de LinkedIn / Linktree AFINLAB"
+              />
+              <ul>
+                {LINKEDIN_ITEMS.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
 
-              <div className="label">Tecnología</div>
-              <Chips items={INSTAGRAM_TECH} />
-            </article>
+            <p className="rs-text">
+              Un solo enlace en la bio de Instagram que centraliza todo el
+              acceso externo al semillero.
+            </p>
 
-            {/* LINKEDIN */}
-            <article className="card">
-              <div className="card__head">
-                <div className="icon icon--in" aria-hidden="true">
-                  in
-                </div>
-                <div>
-                  <div className="card__title">LinkedIn</div>
-                  <div className="card__handle">linktr.ee/afinlab.unalm</div>
-                </div>
-              </div>
-
-              <div className="label">Qué encontrarás</div>
-              <div className="linkedin">
-                <AutoImage
-                  name="redes-linkedin-qr"
-                  alt="QR de LinkedIn / Linktree AFINLAB"
-                />
-                <ul>
-                  {LINKEDIN_ITEMS.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <p>
-                Un solo enlace en la bio de Instagram que centraliza todo el
-                acceso externo al semillero.
-              </p>
-
-              <div className="label">Tecnología</div>
-              <Chips items={LINKEDIN_TECH} />
-            </article>
-          </div>
+            <div className="rs-label">Tecnología</div>
+            <Chips items={LINKEDIN_TECH} />
+          </article>
         </div>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer__inner">
-          <div className="footer__logo">
-            <img src="/afinlab-logo.png" alt="AFINLAB" />
-          </div>
-          <div>
-            <div className="footer__name">AFINLAB</div>
-            <div className="footer__sub">Semillero de Investigación UNALM</div>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
