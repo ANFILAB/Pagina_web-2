@@ -410,3 +410,408 @@ export default function App() {
     </div>
   );
 }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redes Sociales | AFINLAB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Paleta: azul noche + destello verde esmeralda de la marca */
+      --bg-top: #0a1a33;
+      --bg-mid: #0f2a4f;
+      --bg-bottom: #12335c;
+      --glow-green: rgba(38, 166, 108, .28);
+      --glow-blue: rgba(52, 120, 220, .30);
+      --navy: #16284a;          /* texto de chips */
+      --footer: #09152b;        /* footer */
+      --green: #1e6b43;         /* texto activo del menú */
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--white);
+      background: var(--footer);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ---------- HEADER ---------- */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 76px;
+      background: linear-gradient(180deg, #8a8a8a 0%, #e4e4e4 38%, #ffffff 80%);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+    }
+    .header__inner {
+      max-width: 896px;
+      height: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 70px;
+    }
+    .logo { display: block; flex-shrink: 0; }
+    .logo img { height: 46px; width: auto; display: block; }
+    .nav { display: flex; align-items: center; gap: 6px; }
+    .nav a {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      padding: 8px 13px;
+      border-radius: 999px;
+      transition: background .2s;
+    }
+    .nav a:hover { background: rgba(0, 0, 0, .06); }
+    .nav a.active {
+      background: rgba(150, 150, 150, .28);
+      color: var(--green);
+    }
+
+    /* ---------- SECCIÓN PRINCIPAL ---------- */
+    .hero {
+      flex: 1;
+      padding: 22px 20px 78px;
+      background:
+        radial-gradient(ellipse 55% 60% at 0% 0%, var(--glow-green) 0%, rgba(38, 166, 108, 0) 70%),
+        radial-gradient(ellipse 55% 65% at 100% 100%, var(--glow-blue) 0%, rgba(52, 120, 220, 0) 70%),
+        linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bottom) 100%);
+    }
+    .container { max-width: 896px; margin: 0 auto; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .back { font-weight: 700; }
+    .back:hover { text-decoration: underline; }
+    .breadcrumb { color: rgba(255, 255, 255, .72); }
+    .breadcrumb b { color: var(--white); font-weight: 700; }
+    .breadcrumb i { font-style: normal; margin: 0 6px; }
+
+    .eyebrow {
+      margin-top: 28px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 10.5px;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin-top: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .lead {
+      margin-top: 10px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, .88);
+    }
+
+    /* ---------- TARJETAS ---------- */
+    .grid {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .card {
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .08);
+      backdrop-filter: blur(6px);
+    }
+    .card__head { display: flex; align-items: center; gap: 14px; }
+    .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .icon svg { width: 20px; height: 20px; }
+    .icon--in { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px; color: #0a66c2; }
+    .card__title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .card__handle {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .62);
+    }
+
+    .label {
+      margin: 22px 0 12px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .62);
+    }
+    .card p {
+      margin-top: 14px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, .92);
+    }
+
+    .media { display: flex; gap: 8px; }
+    .media img {
+      width: 125px;
+      height: 125px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .15);
+      display: block;
+    }
+    .media img.qr {
+      object-fit: contain;
+      background: #f1f1f1;
+      padding: 10px;
+    }
+
+    .linkedin {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .linkedin img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #f1f1f1;
+      padding: 6px;
+      flex-shrink: 0;
+    }
+    .linkedin li {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 7px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .linkedin li::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--white);
+      flex-shrink: 0;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .chip {
+      background: var(--white);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer {
+      background: var(--footer);
+      padding: 40px 20px 50px;
+    }
+    .footer__inner {
+      max-width: 896px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer__logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #f3f4f6;
+      display: grid;
+      place-items: center;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .footer__logo img { max-width: 100%; max-height: 100%; display: block; }
+    .footer__name { font-weight: 700; font-size: 16px; letter-spacing: .3px; }
+    .footer__sub {
+      margin-top: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #8fa3c4;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 860px) {
+      .header__inner { padding: 0 16px; gap: 24px; overflow-x: auto; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .media img { width: calc((100% - 16px) / 3); height: auto; aspect-ratio: 1; }
+      .linkedin { flex-direction: column; align-items: flex-start; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+      <a href="#" class="logo" aria-label="AFINLAB">
+        <img data-auto="img/redes-logo-afinlab" alt="AFINLAB">
+      </a>
+      <nav class="nav">
+        <a href="#">Sobre nosotros</a>
+        <a href="#">Equipo</a>
+        <a href="#" class="active">Proyectos</a>
+        <a href="#">Publicaciones</a>
+        <a href="#">Eventos</a>
+        <a href="#">Recursos</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="hero">
+    <div class="container">
+
+      <div class="topbar">
+        <a href="#" class="back">‹ Volver a Proyectos</a>
+        <div class="breadcrumb">Proyectos <i>/</i> <b>Difusión en Redes Sociales</b></div>
+      </div>
+
+      <div class="eyebrow">Proyecto 4</div>
+      <h1>Redes Sociales</h1>
+      <p class="lead">Difusión de contenido, cobertura de eventos y posicionamiento externo del semillero.</p>
+
+      <div class="grid">
+
+        <!-- INSTAGRAM -->
+        <article class="card">
+          <div class="card__head">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#c13584" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.3" cy="6.7" r="1" fill="#c13584" stroke="none"/>
+              </svg>
+            </div>
+            <div>
+              <div class="card__title">Instagram</div>
+              <div class="card__handle">@afinlab.unalm</div>
+            </div>
+          </div>
+
+          <div class="label">Contenido que publican</div>
+          <div class="media">
+            <img class="qr" data-auto="img/redes-instagram-qr" alt="QR de Instagram AFINLAB">
+            <img data-auto="img/redes-instagram-evento-1" alt="Evento AFINLAB 1">
+            <img data-auto="img/redes-instagram-evento-2" alt="Evento AFINLAB 2">
+          </div>
+
+          <p>Resultados de investigaciones sectoriales, cobertura de eventos y contenido educativo de finanzas aplicadas.</p>
+
+          <div class="label">Tecnología</div>
+          <div class="chips">
+            <span class="chip">Canva</span>
+            <span class="chip">Instagram (Reels / Stories)</span>
+          </div>
+        </article>
+
+        <!-- LINKEDIN -->
+        <article class="card">
+          <div class="card__head">
+            <div class="icon icon--in" aria-hidden="true">in</div>
+            <div>
+              <div class="card__title">LinkedIn</div>
+              <div class="card__handle">linktr.ee/afinlab.unalm</div>
+            </div>
+          </div>
+
+          <div class="label">Qué encontrarás</div>
+          <div class="linkedin">
+            <img data-auto="img/redes-linkedin-qr" alt="QR de LinkedIn / Linktree AFINLAB">
+            <ul>
+              <li>Web oficial de AFINLAB</li>
+              <li>Redes y publicaciones</li>
+              <li>Formulario de postulación</li>
+            </ul>
+          </div>
+
+          <p>Un solo enlace en la bio de Instagram que centraliza todo el acceso externo al semillero.</p>
+
+          <div class="label">Tecnología</div>
+          <div class="chips">
+            <span class="chip">LinkedIn</span>
+            <span class="chip">Linktree</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__logo">
+        <img data-auto="img/redes-logo-afinlab" alt="AFINLAB">
+      </div>
+      <div>
+        <div class="footer__name">AFINLAB</div>
+        <div class="footer__sub">Semillero de Investigación UNALM</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Carga automática de imágenes: sube el archivo a /img con el nombre indicado
+       (.png, .jpg, .jpeg o .webp) y aparece solo. -->
+  <script>
+    const EXTS = ['png', 'jpg', 'jpeg', 'webp'];
+    document.querySelectorAll('img[data-auto]').forEach(img => {
+      const base = img.dataset.auto;
+      let i = 0;
+      img.onerror = () => {
+        i++;
+        if (i < EXTS.length) img.src = base + '.' + EXTS[i];
+        else img.onerror = null;
+      };
+      img.src = base + '.' + EXTS[0];
+    });
+  </script>
+
+</body>
+</html>
