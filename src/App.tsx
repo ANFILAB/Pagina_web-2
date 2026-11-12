@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import Eventos from "./Eventos";
 import RedesSociales from "./RedesSociales";
 
-type Page = "inicio" | "publicaciones" | "redes";
+type Page = "inicio" | "publicaciones" | "redes" | "eventos";
 function ArrowIcon() {
   return (
     <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -95,6 +96,12 @@ function Header({
             >
               Publicaciones
             </button>
+            <button
+              className={page === "eventos" ? "active" : ""}
+              onClick={() => go("eventos")}
+            >
+              Eventos
+            </button>
             <button onClick={() => go("inicio", "recursos")}>Recursos</button>
             <button className="nav-cta" onClick={() => go("inicio", "contacto")}>
               Conversemos
@@ -129,7 +136,8 @@ function Footer({ navigate }: { navigate: (page: Page, anchor?: string) => void 
           <span>Explora</span>
           <button onClick={() => navigate("inicio", "proyectos")}>Proyectos</button>
           <button onClick={() => navigate("publicaciones")}>Publicaciones</button>
-             <button onClick={() => navigate("redes")}>Redes Sociales</button>
+          <button onClick={() => navigate("eventos")}>Eventos</button>
+          <button onClick={() => navigate("redes")}>Redes Sociales</button>
           <button onClick={() => navigate("inicio", "nosotros")}>Sobre AFINLAB</button>
         </div>
         <div className="footer-contact">
@@ -373,29 +381,35 @@ function Publications({ navigate }: { navigate: (page: Page, anchor?: string) =>
     </main>
   );
 }
+
 function getPageFromHash(): Page {
   const hash = window.location.hash;
   if (hash.startsWith("#/publicaciones")) return "publicaciones";
+  if (hash.startsWith("#/eventos")) return "eventos";
   if (hash.startsWith("#/redes")) return "redes";
   return "inicio";
 }
+
 export default function App() {
-       const [page, setPage] = useState<Page>(getPageFromHash());
+  const [page, setPage] = useState<Page>(getPageFromHash());
+
   useEffect(() => {
     const handleHashChange = () => {
-           setPage(getPageFromHash());
+      setPage(getPageFromHash());
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const navigate = (nextPage: Page, anchor?: string) => {
-        const hash =
+    const hash =
       nextPage === "publicaciones"
         ? "#/publicaciones"
-        : nextPage === "redes"
-          ? "#/redes"
-          : "#/inicio";
+        : nextPage === "eventos"
+          ? "#/eventos"
+          : nextPage === "redes"
+            ? "#/redes"
+            : "#/inicio";
     if (window.location.hash !== hash) {
       window.location.hash = hash;
     }
@@ -412,8 +426,9 @@ export default function App() {
   return (
     <div className="app">
       <Header page={page} navigate={navigate} />
-          {page === "inicio" && <Home navigate={navigate} />}
+      {page === "inicio" && <Home navigate={navigate} />}
       {page === "publicaciones" && <Publications navigate={navigate} />}
+      {page === "eventos" && <Eventos navigate={navigate} />}
       {page === "redes" && <RedesSociales navigate={navigate} />}
       <Footer navigate={navigate} />
     </div>
