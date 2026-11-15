@@ -132,6 +132,142 @@ function Visor({ medio, alt }: { medio: Medio; alt: string }) {
   );
 }
 
+/* ---------- Portada de la tarjeta, con vista previa al pasar el mouse ----------
+   VISTA_PREVIA_EN_TODOS = true  -> funciona en todos los eventos realizados.
+   Si lo pones en false, solo funciona en los "id" de la lista VISTA_PREVIA
+   (son los "id" que están en eventos.ts). */
+const VISTA_PREVIA_EN_TODOS = true;
+const VISTA_PREVIA = new Set([
+  "lanzamiento-2026-1",
+  "talleres-learning-lab",
+  "semana-investigacion",
+  "feria-vocacional",
+  "applied-finance-day",
+  "convocatoria-2026-2",
+]);
+const PAUSA_FOTO = 2800; // milisegundos que dura cada foto (incluye el degradado)
+const MAX_VIDEO = 8000; // máximo que se reproduce cada video
+const FADE_MS = 900; // duración del degradado; debe coincidir con .ev-slide en Eventos.css
+
+function PortadaCard({ ev, onAbrir }: { ev: EventoAnterior; onAbrir: () => void }) {
+  const [hover, setHover] = useState(false);
+  const [i, setI] = useState(0); // elemento que se ve ahora
+  const [prev, setPrev] = useState<number | null>(null); // elemento que se está desvaneciendo
+
+  const nFotos = contarFotos(ev.medios);
+  const nVideos = contarVideos(ev.medios);
+
+  const reducido =
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const conVistaPrevia = (VISTA_PREVIA_EN_TODOS || VISTA_PREVIA.has(ev.id)) && !reducido;
+
+  /* Primero la portada y luego la galería, sin repetir la portada */
+  const secuencia: Medio[] = [
+    { tipo: "foto", src: ev.portada },
+    ...ev.medios.filter((m) => m.tipo !== "youtube" && !(m.tipo === "foto" && m.src === ev.portada)),
+  ];
+  const total = secuencia.length;
+  const reproduciendo = conVistaPrevia && hover;
+
+  const avanzar = () => {
+    setPrev(i);
+    setI((i + 1) % total);
+  };
+
+  /* Pasa al siguiente elemento después de una pausa */
+  useEffect(() => {
+    if (!reproduciendo || total < 2) return;
+    const espera = secuencia[i].tipo === "video" ? MAX_VIDEO : PAUSA_FOTO;
+    const t = window.setTimeout(avanzar, espera);
+    return () => window.clearTimeout(t);
+  }, [reproduciendo, i]);
+
+  /* Carga las fotos por adelantado para que el degradado no parpadee */
+  useEffect(() => {
+    if (!reproduciendo) return;
+    secuencia.forEach((m) => {
+      if (m.tipo === "foto") new Image().src = m.src;
+    });
+  }, [reproduciendo]);
+
+  /* Cuando termina el degradado, retira la imagen anterior */
+  useEffect(() => {
+    if (prev === null) return;
+    const t = window.setTimeout(() => setPrev(null), FADE_MS + 60);
+    return () => window.clearTimeout(t);
+  }, [prev]);
+
+  const entrar = () => {
+    if (!conVistaPrevia || total < 2) return;
+    setHover(true);
+    avanzar();
+  };
+
+  const salir = () => {
+    setHover(false);
+    if (i !== 0) {
+      setPrev(i);
+      setI(0);
+    }
+  };
+
+  /* Cada elemento es una capa; la nueva se disuelve encima de la anterior */
+  const capa = (idx: number, esActual: boolean) => {
+    const m = secuencia[idx];
+    const clase = esActual && prev !== null ? "ev-layer ev-slide" : "ev-layer";
+    if (m.tipo === "video") {
+      return (
+        <video
+          key={idx}
+          className={clase}
+          src={m.src}
+          muted
+          playsInline
+          autoPlay
+          preload="auto"
+          onEnded={esActual && reproduciendo ? avanzar : undefined}
+          onError={esActual && reproduciendo ? avanzar : undefined}
+        />
+      );
+    }
+    if (m.tipo === "foto") return <Foto key={idx} src={m.src} alt="" className={clase} />;
+    return null;
+  };
+
+  const capas = prev !== null && prev !== i ? [capa(prev, false), capa(i, true)] : [capa(i, true)];
+
+  return (
+    <button
+      className="ev-card-photo"
+      onClick={onAbrir}
+      onMouseEnter={entrar}
+      onMouseLeave={salir}
+      aria-label={`Ver galería de ${ev.titulo}: ${resumenMedios(ev.medios)}`}
+    >
+      {capas}
+
+      {reproduciendo && total > 1 && (
+        <span className="ev-dots" aria-hidden="true">
+          {secuencia.map((_, n) => (
+            <i key={n} className={n <= i ? "on" : ""} />
+          ))}
+        </span>
+      )}
+
+      {nFotos > 0 && (
+        <span className="ev-badge">
+          <CameraIcon /> {nFotos}
+        </span>
+      )}
+      {nVideos > 0 && (
+        <span className="ev-badge ev-badge--video">
+          <PlayIcon /> {nVideos}
+        </span>
+      )}
+    </button>
+  );
+}
+
 /* ---------- Página ---------- */
 export default function Eventos({ navigate }: EventosProps) {
   const [detalle, setDetalle] = useState<EventoProximo | null>(null);
@@ -322,46 +458,26 @@ export default function Eventos({ navigate }: EventosProps) {
             {visibles.length === 0 && (
               <p className="ev-count">Todavía no hay eventos en este periodo.</p>
             )}
-            {visibles.map((ev) => {
-              const nFotos = contarFotos(ev.medios);
-              const nVideos = contarVideos(ev.medios);
-              return (
-                <article className="ev-card" key={ev.id}>
-                  <button
-                    className="ev-card-photo"
-                    onClick={() => setGaleria(ev)}
-                    aria-label={`Ver galería de ${ev.titulo}: ${resumenMedios(ev.medios)}`}
-                  >
-                    <Foto src={ev.portada} alt="" />
-                    {nFotos > 0 && (
-                      <span className="ev-badge">
-                        <CameraIcon /> {nFotos}
+            {visibles.map((ev) => (
+              <article className="ev-card" key={ev.id}>
+                <PortadaCard ev={ev} onAbrir={() => setGaleria(ev)} />
+                <div className="ev-card-body">
+                  <span className="ev-card-date">{ev.fecha}</span>
+                  <h3>{ev.titulo}</h3>
+                  <p>{ev.descripcion}</p>
+                  <div className="ev-card-foot">
+                    {ev.asistentes !== undefined && (
+                      <span className="ev-attendees">
+                        <UsersIcon /> {ev.asistentes} asistentes
                       </span>
                     )}
-                    {nVideos > 0 && (
-                      <span className="ev-badge ev-badge--video">
-                        <PlayIcon /> {nVideos}
-                      </span>
-                    )}
-                  </button>
-                  <div className="ev-card-body">
-                    <span className="ev-card-date">{ev.fecha}</span>
-                    <h3>{ev.titulo}</h3>
-                    <p>{ev.descripcion}</p>
-                    <div className="ev-card-foot">
-                      {ev.asistentes !== undefined && (
-                        <span className="ev-attendees">
-                          <UsersIcon /> {ev.asistentes} asistentes
-                        </span>
-                      )}
-                      <button className="ev-link" onClick={() => setGaleria(ev)}>
-                        Ver galería <ArrowIcon />
-                      </button>
-                    </div>
+                    <button className="ev-link" onClick={() => setGaleria(ev)}>
+                      Ver galería <ArrowIcon />
+                    </button>
                   </div>
-                </article>
-              );
-            })}
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
