@@ -688,3 +688,121 @@
     right: 8px;
   }
 }
+/* ---------- Videos y aviso sin eventos ---------- */
+.ev-badge--video {
+  right: 12px;
+  left: auto;
+}
+
+.ev-thumb {
+  position: relative;
+}
+
+.ev-thumb video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ev-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(8 26 44 / 32%);
+  color: white;
+  transition: background 0.2s;
+}
+
+.ev-play svg {
+  width: 38px;
+  height: 38px;
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 40%));
+}
+
+.ev-thumb:hover .ev-play {
+  background: rgb(8 26 44 / 18%);
+}
+
+.ev-lb-frame {
+  width: min(90vw, 960px);
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 10px;
+  background: black;
+}
+
+.ev-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px dashed #b9c9c0;
+  border-radius: 20px;
+  padding: 32px;
+  background: #f8fbf9;
+}
+
+.ev-empty h3 {
+  margin: 0;
+  font:
+    700 20px/1.25 "Manrope",
+    sans-serif;
+}
+
+.ev-empty p {
+  max-width: 520px;
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+/* ---------- Botones de periodo (26 - I, 26 - II) ---------- */
+.ev-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.ev-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 20px;
+  background: white;
+  color: #495869;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.ev-tab span {
+  border-radius: 99px;
+  padding: 2px 8px;
+  background: var(--mint);
+  color: var(--green-dark);
+  font-size: 12px;
+}
+
+.ev-tab:hover {
+  border-color: #9ecbb7;
+  color: var(--green-dark);
+}
+
+.ev-tab.active {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+
+.ev-tab.active span {
+  background: rgb(255 255 255 / 16%);
+  color: white;
+}
